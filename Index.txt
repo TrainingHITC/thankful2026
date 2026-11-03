@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HITC Thankful</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Animation cho phong thư mở */
+        .envelope-container { perspective: 1000px; }
+        .letter-content {
+            transition: transform 0.6s ease-in-out;
+            transform: translateY(-35%); /* Hiển thị 1/3 lá thư */
+        }
+        .envelope-container:hover .letter-content {
+            transform: translateY(-55%); /* Trượt lên thêm khi hover */
+        }
+        
+        /* Modal ẩn hiện mượt mà */
+        .modal-active { display: flex !important; }
+        
+        /* Custom Scrollbar cho textarea */
+        textarea::-webkit-scrollbar { width: 6px; }
+        textarea::-webkit-scrollbar-thumb { background-color: #F37021; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-[#003366] to-[#00529B] min-h-screen font-sans text-white relative">
+
+    <!-- Header / Navbar -->
+    <header class="flex justify-between items-center p-6 border-b border-white/20">
+        <div class="flex items-center gap-4">
+            <!-- Đã fix Logo hiển thị trực tiếp -->
+            <img id="hitcLogo" src="https://i.postimg.cc/rzXvhBtG/HITC-tach-nen.png" alt="HITC" class="h-12 object-contain bg-white/90 p-1.5 rounded shadow-sm">
+            <div>
+                <h1 class="font-bold text-xl">Người truyền lửa</h1>
+                <p class="text-sm text-orange-300">kết nối tri thức</p>
+            </div>
+        </div>
+        <button onclick="openModal()" class="bg-[#F37021] hover:bg-orange-600 text-white px-6 py-2 rounded-full font-medium transition-colors shadow-lg">
+            Viết một lá thư ↗
+        </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <!-- Text Section -->
+        <div>
+            <h2 class="text-sm font-bold tracking-widest text-[#F37021] mb-2 uppercase">Gửi trao tri ân</h2>
+            <h3 class="text-5xl font-extrabold mb-6 leading-tight">Có đôi lời<br>muốn gửi bạn.</h3>
+            <p class="text-lg text-blue-100 mb-8 opacity-90">
+                Bạn có lời thương nào muốn gửi đến giảng viên đã đồng hành cùng mình? Hãy viết cho người ấy một lá thư để lưu lại những kỷ niệm đẹp tại HITC.
+            </p>
+            <button onclick="openModal()" class="border-2 border-[#F37021] text-[#F37021] hover:bg-[#F37021] hover:text-white px-8 py-3 rounded-full font-semibold transition-all">
+                Mở hòm thư / Viết thư
+            </button>
+        </div>
+
+        <!-- Animated Envelope Section -->
+        <div class="flex justify-center items-center">
+            <div class="envelope-container relative w-80 h-56 cursor-pointer">
+                <!-- Mặt sau phong bì -->
+                <div class="absolute inset-0 bg-[#002244] rounded-lg shadow-2xl z-0"></div>
+                
+                <!-- Lá thư (Đang thò ra 1/3) -->
+                <div class="letter-content absolute left-4 right-4 top-0 bg-orange-50 text-gray-800 rounded shadow-inner p-5 z-10 border border-gray-200" style="height: 110%;">
+                    <h4 class="text-[#00529B] font-bold mb-2">Gửi anh/chị,</h4>
+                    <p class="text-sm leading-relaxed">
+                        Cảm ơn anh chị giảng viên đã lan tỏa, truyền tải tri thức, đóng góp cho sự phát triển năng lực của công ty...
+                    </p>
+                </div>
+
+                <!-- Mặt trước phong bì -->
+                <div class="absolute inset-0 bg-[#004080] rounded-lg z-20" style="clip-path: polygon(0 0, 50% 55%, 100% 0, 100% 100%, 0 100%); border-top: 1px solid rgba(255,255,255,0.1);"></div>
+                
+                <!-- Nắp gập phía dưới tạo khối -->
+                <div class="absolute inset-0 bg-[#004a8b] rounded-lg z-30 opacity-60" style="clip-path: polygon(0 100%, 50% 50%, 100% 100%);"></div>
+
+                <!-- Dấu Seal -->
+                <div class="absolute left-1/2 top-[55%] transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-[#F37021] rounded-full z-40 flex items-center justify-center shadow-md">
+                    <span class="text-white text-xs border border-white rounded-full w-8 h-8 flex items-center justify-center font-serif">H</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-8 mt-12 border-t border-white/10">
+        <p class="text-lg font-medium text-orange-200">
+            Cảm ơn Anh/ chị vì đã đồng hành cùng sự phát triển của HITC.
+        </p>
+    </footer>
+
+    <!-- Form Viết thư (Modal Popup) -->
+    <div id="writeModal" class="fixed inset-0 bg-[#001a33]/90 z-50 hidden items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto text-gray-800 shadow-2xl">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center p-6 border-b border-gray-100">
+                <div>
+                    <p class="text-xs text-[#00529B] font-bold tracking-wider uppercase mb-1">HITC Thankful</p>
+                    <h2 class="text-2xl font-extrabold text-gray-900">Trao gửi lời thương</h2>
+                </div>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-[#F37021] transition-colors p-2 text-xl font-bold">✕</button>
+            </div>
+
+            <!-- Modal Body (Form) -->
+            <form id="letterForm" onsubmit="submitLetter(event)" class="p-6 space-y-6">
+                
+                <!-- Người nhận -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Bạn muốn gửi thư đến ai?</label>
+                    <input type="text" id="receiverName" required placeholder="Nhập tên giảng viên / người nhận..." class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00529B] focus:bg-white transition-all">
+                </div>
+
+                <!-- Người gửi & Ẩn danh -->
+                <div>
+                    <div class="flex items-center gap-4 mb-2">
+                        <label class="block text-sm font-semibold text-gray-700">Tên người gửi</label>
+                        <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-500 hover:text-[#F37021]">
+                            <input type="checkbox" id="isAnonymous" onchange="toggleAnonymous()" class="accent-[#F37021] w-4 h-4">
+                            Gửi ẩn danh
+                        </label>
+                    </div>
+                    <input type="text" id="senderName" required placeholder="Tên bạn muốn ký dưới lá thư..." class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00529B] focus:bg-white transition-all">
+                </div>
+
+                <!-- Nội dung thư -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Lời nhắn của bạn</label>
+                    <textarea id="messageContent" required rows="5" placeholder="Gửi bạn, cảm ơn bạn vì..." class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00529B] focus:bg-white transition-all resize-none"></textarea>
+                </div>
+
+                <!-- Chọn thiết kế phong bì -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">Chọn mẫu phong bì</label>
+                    <div class="grid grid-cols-3 gap-4">
+                        <!-- Mẫu 1 -->
+                        <label class="cursor-pointer">
+                            <input type="radio" name="envelopeType" value="Sang trọng" checked class="peer hidden">
+                            <div class="border-2 border-transparent peer-checked:border-[#F37021] rounded-lg p-2 bg-gradient-to-br from-[#003366] to-[#001a33] h-24 relative overflow-hidden transition-all shadow-sm">
+                                <span class="absolute bottom-2 left-2 text-white text-xs font-bold">Gửi bạn,</span>
+                            </div>
+                            <p class="text-center text-xs mt-2 text-gray-500 font-medium peer-checked:text-[#F37021]">Sang trọng</p>
+                        </label>
+                        
+                        <!-- Mẫu 2 -->
+                        <label class="cursor-pointer">
+                            <input type="radio" name="envelopeType" value="Hiện đại" class="peer hidden">
+                            <div class="border-2 border-transparent peer-checked:border-[#F37021] rounded-lg p-2 bg-gradient-to-tr from-[#00529B] to-[#F37021] h-24 relative overflow-hidden transition-all shadow-sm">
+                                <span class="absolute bottom-2 left-2 text-white text-xs font-bold">Gửi bạn,</span>
+                            </div>
+                            <p class="text-center text-xs mt-2 text-gray-500 font-medium peer-checked:text-[#F37021]">Hiện đại</p>
+                        </label>
+
+                        <!-- Mẫu 3 -->
+                        <label class="cursor-pointer">
+                            <input type="radio" name="envelopeType" value="Thanh lịch" class="peer hidden">
+                            <div class="border-2 border-transparent peer-checked:border-[#F37021] rounded-lg p-2 bg-gradient-to-bl from-orange-100 to-white border border-gray-200 h-24 relative overflow-hidden transition-all shadow-sm">
+                                <span class="absolute bottom-2 left-2 text-[#00529B] text-xs font-bold">Gửi bạn,</span>
+                            </div>
+                            <p class="text-center text-xs mt-2 text-gray-500 font-medium peer-checked:text-[#F37021]">Thanh lịch</p>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Nút Submit -->
+                <div class="pt-4">
+                    <button type="submit" id="submitBtn" class="w-full bg-[#00529B] hover:bg-[#004080] text-white py-3 rounded-lg font-bold text-lg transition-colors flex justify-center items-center gap-2 shadow-lg">
+                        Gửi lá thư đi ✈️
+                    </button>
+                    <p id="statusText" class="text-center text-sm font-medium mt-3 hidden"></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Link Web App của Google Apps Script
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwz79YkGKZ2eLQJ-xyyR0TGKLqlvAFKEaT36Sbj_uZaU1SlWLC9wLFVuJwKv8dDYv4wuQ/exec';
+
+        // Xử lý ẩn danh
+        function toggleAnonymous() {
+            const isAnon = document.getElementById('isAnonymous').checked;
+            const senderInput = document.getElementById('senderName');
+            if(isAnon) {
+                senderInput.value = 'Một người giấu tên';
+                senderInput.disabled = true;
+                senderInput.classList.add('bg-gray-200');
+            } else {
+                senderInput.value = '';
+                senderInput.disabled = false;
+                senderInput.classList.remove('bg-gray-200');
+            }
+        }
+
+        // Đóng mở Modal
+        function openModal() { document.getElementById('writeModal').classList.add('modal-active'); }
+        function closeModal() { document.getElementById('writeModal').classList.remove('modal-active'); }
+
+        // Gửi dữ liệu về Google Sheets
+        function submitLetter(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('submitBtn');
+            const status = document.getElementById('statusText');
+
+            btn.disabled = true;
+            btn.innerHTML = 'Đang gửi thư... ⏳';
+            
+            const data = {
+                receiver: document.getElementById('receiverName').value,
+                sender: document.getElementById('senderName').value,
+                message: document.getElementById('messageContent').value,
+                isAnonymous: document.getElementById('isAnonymous').checked,
+                envelopeTheme: document.querySelector('input[name="envelopeType"]:checked').value
+            };
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' } // Tránh lỗi CORS preflight
+            })
+            .then(response => {
+                status.classList.remove('hidden', 'text-red-500');
+                status.classList.add('text-green-600');
+                status.innerText = 'Thư của bạn đã được gửi thành công! 🎉';
+                btn.innerHTML = 'Đã gửi ✓';
+                
+                setTimeout(() => {
+                    closeModal();
+                    document.getElementById('letterForm').reset();
+                    btn.disabled = false;
+                    btn.innerHTML = 'Gửi lá thư đi ✈️';
+                    status.classList.add('hidden');
+                }, 2000);
+            })
+            .catch(error => {
+                status.classList.remove('hidden', 'text-green-600');
+                status.classList.add('text-red-500');
+                status.innerText = 'Có lỗi xảy ra, vui lòng thử lại sau.';
+                btn.disabled = false;
+                btn.innerHTML = 'Thử lại ✈️';
+            });
+        }
+    </script>
+</body>
+</html>
